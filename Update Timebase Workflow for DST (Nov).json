@@ -103,7 +103,7 @@
     "failureCount": 0,
     "owner": {
         "type": "IDENTITY",
-        "name": "%%WORKFLOW_DEFAULT_OWNER%%"
+        "name": "**WORKFLOW_DEFAULT_OWNER**"
     },
     "trigger": {
         "type": "SCHEDULED",
