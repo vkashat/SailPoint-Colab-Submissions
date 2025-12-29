@@ -1,0 +1,130 @@
+{
+    "name": "Update Next Processing Date Transform (Nov)",
+    "description": "Updates MVP_Static_NextProcessingDate transform to adjust for DST",
+    "definition": {
+        "start": "HTTP Request",
+        "steps": {
+            "End Step - Failure": {
+                "actionId": "sp:operator-failure",
+                "displayName": "",
+                "failureName": "API Error",
+                "type": "failure"
+            },
+            "End Step - Success": {
+                "actionId": "sp:operator-success",
+                "displayName": "",
+                "type": "success"
+            },
+            "HTTP Request": {
+                "actionId": "sp:http",
+                "attributes": {
+                    "authenticationType": "OAuth",
+                    "jsonRequestBody": {
+                        "attributes": {
+                            "nextProcessingDate": {
+                                "attributes": {
+                                    "expression": "+22h/h",
+                                    "input": {
+                                        "attributes": {
+                                            "input": {
+                                                "attributes": {
+                                                    "ignoreErrors": false,
+                                                    "values": [
+                                                        {
+                                                            "attributes": {
+                                                                "attributeName": "LAST_DAY_OF_WORK",
+                                                                "sourceName": "Workday"
+                                                            },
+                                                            "type": "accountAttribute"
+                                                        },
+                                                        {
+                                                            "attributes": {
+                                                                "attributeName": "TERMINATION_DATE",
+                                                                "sourceName": "Workday"
+                                                            },
+                                                            "type": "accountAttribute"
+                                                        },
+                                                        {
+                                                            "attributes": {
+                                                                "attributeName": "CONTRACT_END_DATE",
+                                                                "sourceName": "Workday"
+                                                            },
+                                                            "type": "accountAttribute"
+                                                        },
+                                                        {
+                                                            "attributes": {
+                                                                "value": "12/31/3000"
+                                                            },
+                                                            "type": "static"
+                                                        }
+                                                    ]
+                                                },
+                                                "type": "firstValid"
+                                            },
+                                            "inputFormat": "M/d/yyyy",
+                                            "outputFormat": "ISO8601"
+                                        },
+                                        "type": "dateFormat"
+                                    },
+                                    "roundUp": false
+                                },
+                                "type": "dateMath"
+                            },
+                            "value": "#{if}($nextProcessingDate != '3000-12-31T21:00Z')$nextProcessingDate#{else}#{end}"
+                        },
+                        "id": "6c27022f-16d9-4507-ac11-1c0430c262bf",
+                        "internal": false,
+                        "name": "MVP_Static_NextProcessingDate",
+                        "type": "static"
+                    },
+                    "method": "put",
+                    "oAuthClientId": "**CLIENTID**",
+                    "oAuthClientSecret": "**CLIENTSECRET**",
+                    "oAuthCredentialLocation": "oAuthInHeader",
+                    "oAuthTokenUrl": "**WORKFLOW_OAUTH_URL**",
+                    "requestContentType": "json",
+                    "url": "**WORKFLOW_TRANFORM_URL**"
+                },
+                "catch": [
+                    {
+                        "next": "End Step - Failure"
+                    }
+                ],
+                "description": "Updates transform to change time expression to +22h",
+                "displayName": "",
+                "nextStep": "End Step - Success",
+                "type": "action",
+                "versionNumber": 2
+            }
+        }
+    },
+    "enabled": false,
+    "executionCount": 0,
+    "failureCount": 0,
+    "owner": {
+        "type": "IDENTITY",
+        "name": "%%WORKFLOW_DEFAULT_OWNER%%"
+    },
+    "trigger": {
+        "type": "SCHEDULED",
+        "attributes": {
+            "cronString": "0 2 * 11 0#1",
+            "frequency": "yearly",
+            "id": "idn:cron-schedule",
+            "timeZone": "America/New_York",
+            "yearlyRelativeDates": [
+                {
+                    "day": "Sunday",
+                    "week": "First"
+                }
+            ],
+            "yearlyRelativeMonths": [
+                "Nov"
+            ],
+            "yearlyScheduleType": "yearlyRelativeDates",
+            "yearlyTimes": [
+                "1969-12-31T07:00:00.000Z"
+            ]
+        }
+    }
+}
